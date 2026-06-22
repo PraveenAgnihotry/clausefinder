@@ -4,6 +4,7 @@ IMPORTANT: import this module *before* importing transformers / sentence_transfo
 It redirects all model caches to the repo-local ./models directory so nothing is ever
 written to the C-drive user cache.
 """
+
 from __future__ import annotations
 
 import os
@@ -38,8 +39,8 @@ GEMINI_MODEL = "gemini-2.5-flash"
 
 # --- Retrieval / chunking ----------------------------------------------------
 TOP_K = 5
-CHUNK_SIZE = 800       # characters; tune during indexing
-CHUNK_OVERLAP = 150    # characters
+CHUNK_SIZE = 800  # characters; tune during indexing
+CHUNK_OVERLAP = 150  # characters
 
 # --- Build artifacts ---------------------------------------------------------
 FAISS_INDEX_PATH = PROCESSED_DIR / "index.faiss"
