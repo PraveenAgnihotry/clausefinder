@@ -45,24 +45,38 @@ def _select_parser(relative_path: str) -> Callable[[Path, str], list[ParsedRecor
 
 
 def _print_summary(per_source: dict[str, list[ParsedRecord]]) -> None:
-    print("source_id                                records  with_section  avg_len  max_len")
+    print("source_id                                total  with_section  text_len_lt_30")
     print("-" * 78)
     for source_id, records in per_source.items():
-        lengths = [len(record.text) for record in records]
         count = len(records)
         with_section = sum(record.section is not None for record in records)
-        avg_len = int(sum(lengths) / count) if count else 0
-        max_len = max(lengths) if lengths else 0
+        orphan_fragments = sum(len(record.text) < 30 for record in records)
+        section_window = [record.section if record.section is not None else "<None>" for record in records[:25]]
+        section_preview = " | ".join(section_window) if section_window else "<none>"
+
         print(
-            f"{source_id:<40} {count:>7} {with_section:>13} {avg_len:>8} {max_len:>8}"
+            f"{source_id:<40} {count:>5} {with_section:>13} {orphan_fragments:>15}"
         )
+        print(f"  sections[1..25]: {section_preview}")
 
 
-def _write_preview(per_source: dict[str, list[ParsedRecord]]) -> Path:
-    preview = {source_id: [asdict(record) for record in records[:3]] for source_id, records in per_source.items()}
-    output_path = config.PROCESSED_DIR / "parsed_preview.json"
-    output_path.write_text(json.dumps(preview, indent=2), encoding="utf-8")
-    return output_path
+def _write_outputs(per_source: dict[str, list[ParsedRecord]]) -> tuple[Path, Path]:
+    preview = {
+        source_id: [asdict(record) for record in records[:3]]
+        for source_id, records in per_source.items()
+    }
+    full = {
+        source_id: [asdict(record) for record in records]
+        for source_id, records in per_source.items()
+    }
+
+    preview_path = config.PROCESSED_DIR / "parsed_preview.json"
+    preview_path.write_text(json.dumps(preview, indent=2), encoding="utf-8")
+
+    full_path = config.PROCESSED_DIR / "parsed_full.json"
+    full_path.write_text(json.dumps(full, indent=2), encoding="utf-8")
+
+    return preview_path, full_path
 
 
 def main() -> None:
@@ -86,8 +100,9 @@ def main() -> None:
             per_source_records[source_id] = []
 
     _print_summary(per_source_records)
-    preview_path = _write_preview(per_source_records)
+    preview_path, full_path = _write_outputs(per_source_records)
     print(f"\nWrote preview JSON: {preview_path}")
+    print(f"Wrote full JSON: {full_path}")
 
 
 if __name__ == "__main__":

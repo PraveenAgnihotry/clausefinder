@@ -11,6 +11,8 @@ _INTERNAL_WS_RE = re.compile(r"[ \t]+")
 _ONLY_DIGITS_RE = re.compile(r"^\d+$")
 _PAGE_X_RE = re.compile(r"^page\s+\d+$", re.IGNORECASE)
 _PAGE_X_OF_Y_RE = re.compile(r"^page\s+\d+\s+of\s+\d+$", re.IGNORECASE)
+_ROMAN_NUMERAL_RE = re.compile(r"^(?:i|ii|iii|iv|v|vi|vii|viii|ix|x|xi|xii|xiii|xiv|xv|xvi|xvii|xviii|xix|xx)$", re.IGNORECASE)
+_P_OR_PP_RE = re.compile(r"^pp?$", re.IGNORECASE)
 
 _LIGATURES = {
 	"\ufb00": "ff",
@@ -122,4 +124,6 @@ def is_boilerplate_line(line: str) -> bool:
 		_ONLY_DIGITS_RE.fullmatch(stripped)
 		or _PAGE_X_RE.fullmatch(stripped)
 		or _PAGE_X_OF_Y_RE.fullmatch(stripped)
+		or _ROMAN_NUMERAL_RE.fullmatch(stripped)
+		or _P_OR_PP_RE.fullmatch(stripped)
 	)
