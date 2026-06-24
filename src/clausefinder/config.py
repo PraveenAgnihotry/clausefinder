@@ -52,5 +52,6 @@ APPROX_CHARS_PER_TOKEN = 4
 EMBED_EXCLUDED_SOURCES = {"approved_documents_catalogue_json"}
 
 # --- Build artifacts ---------------------------------------------------------
-FAISS_INDEX_PATH = PROCESSED_DIR / "index.faiss"
+FAISS_INDEX_PATH = PROCESSED_DIR / "clausefinder.faiss"
+INDEX_META_PATH = PROCESSED_DIR / "index_meta.json"
 SQLITE_DB_PATH = PROCESSED_DIR / "clausefinder.sqlite"
