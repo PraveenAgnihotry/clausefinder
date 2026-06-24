@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import logging
-from pathlib import Path
 import re
+from pathlib import Path
 
 from bs4 import BeautifulSoup
 from bs4.element import Tag

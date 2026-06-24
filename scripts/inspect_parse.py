@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from dataclasses import asdict
 import json
 import logging
+from collections.abc import Callable
+from dataclasses import asdict
 from pathlib import Path
-from typing import Callable
 
 from clausefinder import config
 from clausefinder.ingest.parse_html import parse_html
