@@ -41,6 +41,11 @@ GEMINI_MODEL = "gemini-2.5-flash"
 TOP_K = 5
 CHUNK_SIZE = 800  # characters; tune during indexing
 CHUNK_OVERLAP = 150  # characters
+CHUNK_MAX_TOKENS = 480
+CHUNK_TARGET_TOKENS = 384
+CHUNK_OVERLAP_TOKENS = 64
+APPROX_CHARS_PER_TOKEN = 4
+EMBED_EXCLUDED_SOURCES = {"approved_documents_catalogue_json"}
 
 # --- Build artifacts ---------------------------------------------------------
 FAISS_INDEX_PATH = PROCESSED_DIR / "index.faiss"
