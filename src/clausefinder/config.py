@@ -34,6 +34,10 @@ for _d in (DATA_DIR, RAW_DIR, PROCESSED_DIR, MODELS_DIR):
 # --- Models ------------------------------------------------------------------
 # English corpus -> bge-small-en. Switch to "BAAI/bge-m3" only if multilingual sources added.
 EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"
+EMBED_BATCH_SIZE = 64
+EMBED_NORMALIZE = True
+EMBED_DEVICE = None  # None -> auto: cuda if available else cpu
+QUERY_INSTRUCTION = "Represent this sentence for searching relevant passages: "
 # Free-tier stable Flash. Verify availability for your key with client.models.list().
 GEMINI_MODEL = "gemini-2.5-flash"
 
