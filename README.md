@@ -4,6 +4,8 @@ A Retrieval-Augmented Generation (RAG) assistant that answers building-regulatio
 compliance questions from a corpus of **public** construction regulations, returning grounded
 answers **with exact source citations** — or clearly stating when the answer is not in its sources.
 
+corpus scoped to the building-regulations regime as it applies in England, plus the "known limitations" bullets above.
+
 > Status: work in progress.
 
 ## What problem are you solving, and for whom?

@@ -51,12 +51,12 @@ def _print_summary(per_source: dict[str, list[ParsedRecord]]) -> None:
         count = len(records)
         with_section = sum(record.section is not None for record in records)
         orphan_fragments = sum(len(record.text) < 30 for record in records)
-        section_window = [record.section if record.section is not None else "<None>" for record in records[:25]]
+        section_window = [
+            record.section if record.section is not None else "<None>" for record in records[:25]
+        ]
         section_preview = " | ".join(section_window) if section_window else "<none>"
 
-        print(
-            f"{source_id:<40} {count:>5} {with_section:>13} {orphan_fragments:>15}"
-        )
+        print(f"{source_id:<40} {count:>5} {with_section:>13} {orphan_fragments:>15}")
         print(f"  sections[1..25]: {section_preview}")
 
 
