@@ -40,9 +40,12 @@ EMBED_DEVICE = None  # None -> auto: cuda if available else cpu
 QUERY_INSTRUCTION = "Represent this sentence for searching relevant passages: "
 # Free-tier stable Flash. Verify availability for your key with client.models.list().
 GEMINI_MODEL = "gemini-2.5-flash"
+GEMINI_TEMPERATURE = 0.0
+GEMINI_MAX_OUTPUT_TOKENS = 1024
 
 # --- Retrieval / chunking ----------------------------------------------------
 TOP_K = 5
+RETRIEVAL_MIN_SCORE = 0.30
 CHUNK_SIZE = 800  # characters; tune during indexing
 CHUNK_OVERLAP = 150  # characters
 CHUNK_MAX_TOKENS = 480
