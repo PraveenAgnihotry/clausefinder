@@ -92,6 +92,14 @@ def _iso_utc_now() -> str:
     return datetime.now(UTC).isoformat().replace("+00:00", "Z")
 
 
+def _portable_path(path: Path) -> str:
+    """Return a repo-relative POSIX path, or just filename when outside repo root."""
+    try:
+        return path.relative_to(config.PROJECT_ROOT).as_posix()
+    except ValueError:
+        return path.name
+
+
 def _token_stats(chunks: list[chunk.Chunk]) -> tuple[int, int, int]:
     if not chunks:
         return 0, 0, 0
@@ -149,8 +157,8 @@ def build(*, replace: bool = True) -> dict[str, Any]:
             "n_documents_total": len(records),
             "n_documents_indexed": documents_indexed,
             "excluded_sources": sorted(config.EMBED_EXCLUDED_SOURCES),
-            "faiss_index_path": str(config.FAISS_INDEX_PATH),
-            "db_path": str(config.SQLITE_DB_PATH),
+            "faiss_index_path": _portable_path(config.FAISS_INDEX_PATH),
+            "db_path": _portable_path(config.SQLITE_DB_PATH),
             "built_at": _iso_utc_now(),
         }
         config.INDEX_META_PATH.write_text(json.dumps(meta, indent=2), encoding="utf-8")
