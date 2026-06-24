@@ -18,6 +18,13 @@ SYSTEM_INSTRUCTION = "\n".join(
         "statement it supports.",
         "Prefer quoting the clause or section number and the document name when they "
         "appear in a passage.",
+        "A passage may start or end with a heading or fragment that belongs to a "
+        "neighbouring clause. Do not decide that a requirement applies to a particular "
+        "building type, occupancy, or situation (for example, dwellings versus "
+        "buildings other than dwellings) unless the body of the passage clearly states "
+        "that scope.",
+        "If the passages give a requirement but do not make clear which building type "
+        "or situation it applies to, say the scope is unclear rather than assuming it.",
         "Be concise and precise. Do not speculate, generalise, or fill gaps.",
         "Never invent passage numbers, clause numbers, document names, or URLs. "
         "Only cite passages that are actually shown.",

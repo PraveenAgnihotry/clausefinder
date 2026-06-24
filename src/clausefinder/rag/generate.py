@@ -3,17 +3,22 @@
 from __future__ import annotations
 
 import os
+import ssl
+import time
 from dataclasses import dataclass
 
+import httpx
 from dotenv import load_dotenv
 from google import genai
-from google.genai import types
+from google.genai import errors, types
 
 from clausefinder import config
 from clausefinder.rag import prompt, retrieve
 from clausefinder.rag.retrieve import RetrievedChunk
 
 _CLIENT: genai.Client | None = None
+_TRANSIENT_RETRY_CODES = {429, 500, 503}
+_MAX_GENERATE_ATTEMPTS = 3
 
 
 def get_client() -> genai.Client:
@@ -47,15 +52,35 @@ def generate_answer(query: str, chunks: list[RetrievedChunk]) -> str:
     user_prompt = prompt.build_user_prompt(query, chunks)
     client = get_client()
 
-    resp = client.models.generate_content(
-        model=config.GEMINI_MODEL,
-        contents=user_prompt,
-        config=types.GenerateContentConfig(
-            system_instruction=prompt.SYSTEM_INSTRUCTION,
-            temperature=config.GEMINI_TEMPERATURE,
-            max_output_tokens=config.GEMINI_MAX_OUTPUT_TOKENS,
-        ),
-    )
+    for attempt in range(1, _MAX_GENERATE_ATTEMPTS + 1):
+        try:
+            resp = client.models.generate_content(
+                model=config.GEMINI_MODEL,
+                contents=user_prompt,
+                config=types.GenerateContentConfig(
+                    system_instruction=prompt.SYSTEM_INSTRUCTION,
+                    temperature=config.GEMINI_TEMPERATURE,
+                    max_output_tokens=config.GEMINI_MAX_OUTPUT_TOKENS,
+                    thinking_config=types.ThinkingConfig(thinking_budget=0),
+                ),
+            )
+            break
+        except errors.APIError as exc:
+            if exc.code not in _TRANSIENT_RETRY_CODES or attempt == _MAX_GENERATE_ATTEMPTS:
+                raise
+            time.sleep(2 ** (attempt - 1))
+        except (httpx.TransportError, ssl.SSLError):
+            if attempt == _MAX_GENERATE_ATTEMPTS:
+                raise
+            time.sleep(2 ** (attempt - 1))
+
+    candidate = resp.candidates[0] if resp.candidates else None
+    finish_reason = getattr(candidate, "finish_reason", None)
+    if finish_reason == types.FinishReason.MAX_TOKENS:
+        raise RuntimeError(
+            "Gemini response was truncated at max_output_tokens; refusing to return an "
+            "incomplete compliance answer."
+        )
 
     answer_text = resp.text
     if not answer_text:
@@ -85,7 +110,7 @@ def answer_question(
 
     low_conf = retrieve.is_low_confidence(chunks)
     text = generate_answer(query, chunks)
-    refused = text.strip().startswith(prompt.REFUSAL_MESSAGE) or (low_conf and not chunks)
+    refused = text.strip().startswith(prompt.REFUSAL_MESSAGE)
 
     return Answer(
         query=query,

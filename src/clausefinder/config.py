@@ -41,7 +41,7 @@ QUERY_INSTRUCTION = "Represent this sentence for searching relevant passages: "
 # Free-tier stable Flash. Verify availability for your key with client.models.list().
 GEMINI_MODEL = "gemini-2.5-flash"
 GEMINI_TEMPERATURE = 0.0
-GEMINI_MAX_OUTPUT_TOKENS = 1024
+GEMINI_MAX_OUTPUT_TOKENS = 2048
 
 # --- Retrieval / chunking ----------------------------------------------------
 TOP_K = 5
